@@ -5,11 +5,7 @@ import (
 	"os"
 )
 
-func IniciarGin(c *gin.Context, jsonData []byte) {
-	c.JSON(200, jsonData)
-}
-
-func Ex2() {
+func Ex2_3() {
 	gin.SetMode("release")
 	router := gin.Default()
 
@@ -18,9 +14,24 @@ func Ex2() {
 		panic(err)
 	}
 
+	//Ex2
 	router.GET("/", func(c *gin.Context) {
 		c.Data(200, "json", arq)
 	})
 
+	//Ex3
+	group := router.Group("/products")
+	{
+		group.GET("/all", GetAll)
+	}
+
 	router.Run()
+}
+
+func GetAll(c *gin.Context) {
+	arq, err := os.ReadFile("./GoWeb1/Aula1/products.json")
+	if err != nil {
+		panic(err)
+	}
+	c.Data(200, "json", arq)
 }

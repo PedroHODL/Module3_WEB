@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/PedroHODL/Module3_WEB.git/GoWeb2/Aula1/Exercicios"
+	"github.com/PedroHODL/Module3_WEB.git/GoWeb1/Aula2/Exercicios"
 )
 
 func main() {

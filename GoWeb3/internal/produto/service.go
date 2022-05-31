@@ -1,8 +1,4 @@
-package blabla
-
-import (
-	"github.com/GoWeb2&3-Arquitecture/internal/produto/repository"
-)
+package produto
 
 type Services interface {
 	GetAll() ([]Product, error)
@@ -23,4 +19,13 @@ func (s *service) GetAll() ([]Product, error) {
 	if err != nil {
 		return nil, err
 	}
+	return ps, nil
+}
+
+func (s *service) Create(id int, name, productType string, count int, price float64) (Product, error) {
+	ps, err := s.repository.Create(id, name, productType, count, price)
+	if err != nil {
+		return Product{}, err
+	}
+	return ps, nil
 }

@@ -2,14 +2,14 @@ package produto
 
 type Services interface {
 	GetAll() ([]Product, error)
-	Create(id int, name, productType string, count int, price float64) (Product, error)
+	Create(name, productType string, count int, price float64) (Product, error)
 }
 
 type service struct {
 	repository Repository
 }
 
-func newService(r Repository) Services {
+func NewService(r Repository) Services {
 	s := service{r}
 	return &s
 }
@@ -22,7 +22,8 @@ func (s *service) GetAll() ([]Product, error) {
 	return ps, nil
 }
 
-func (s *service) Create(id int, name, productType string, count int, price float64) (Product, error) {
+func (s *service) Create(name, productType string, count int, price float64) (Product, error) {
+	id := s.repository.LastID()
 	ps, err := s.repository.Create(id, name, productType, count, price)
 	if err != nil {
 		return Product{}, err

@@ -28,27 +28,25 @@ func NewProduct(p produto.Services) Product {
 	return new
 }
 
-func (p *Product) TokenAuthMiddleware() gin.HandlerFunc {
+func (p *Product) TokenAuthMiddleware(ctx *gin.Context) {
 	requiredToken := os.Getenv("TOKEN")
 
 	if requiredToken == "" {
 		log.Fatal("Variavel de sistema TOKEN vazia")
 	}
 
-	return func(ctx *gin.Context) {
-		token := ctx.GetHeader("token")
-		if token == "" {
-			ctx.AbortWithStatusJSON(web.DecodeError(http.StatusUnauthorized, "token vazio"))
-			return
-		}
-
-		if token != requiredToken {
-			ctx.AbortWithStatusJSON(web.DecodeError(http.StatusUnauthorized, "token inválido"))
-			return
-		}
-
-		ctx.Next()
+	token := ctx.GetHeader("token")
+	if token == "" {
+		ctx.AbortWithStatusJSON(web.DecodeError(http.StatusUnauthorized, "token vazio"))
+		return
 	}
+
+	if token != requiredToken {
+		ctx.AbortWithStatusJSON(web.DecodeError(http.StatusUnauthorized, "token inválido"))
+		return
+	}
+
+	ctx.Next()
 }
 
 func (p *Product) IdVerificatorMiddleware(ctx *gin.Context) {
@@ -58,7 +56,7 @@ func (p *Product) IdVerificatorMiddleware(ctx *gin.Context) {
 		return
 	}
 
-	if 0 > id && id > p.service.LastID() {
+	if 0 > id || id > p.service.LastID() {
 		ctx.AbortWithStatusJSON(web.DecodeError(http.StatusBadRequest, "id fora do limite"))
 		return
 	}
@@ -83,7 +81,6 @@ func (p *Product) GetAll(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(web.NewResponse(http.StatusOK, prod))
-	return
 }
 
 // Adicionar um novo produto godoc
@@ -182,7 +179,6 @@ func (p *Product) Update(ctx *gin.Context) {
 	}
 
 	ctx.JSON(web.NewResponse(http.StatusOK, prod))
-	return
 }
 
 // Trocar o nome de um produto godoc
@@ -218,7 +214,6 @@ func (p *Product) UpdateName(ctx *gin.Context) {
 	}
 
 	ctx.JSON(web.NewResponse(http.StatusOK, prod))
-	return
 }
 
 // Deletar um produto godoc
@@ -243,5 +238,4 @@ func (p *Product) DeleteProduct(ctx *gin.Context) {
 
 	prod := fmt.Sprintf("O produto %d foi removido", id)
 	ctx.JSON(web.NewResponse(http.StatusOK, prod))
-
 }

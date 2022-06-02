@@ -40,7 +40,7 @@ func main() {
 
 	r := server.Group("/produtos")
 	{
-		r.Use(p.TokenAuthMiddleware())
+		r.Use(p.TokenAuthMiddleware)
 
 		r.POST("/", p.CreateProduct)
 		r.GET("/", p.GetAll)

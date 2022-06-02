@@ -17,6 +17,7 @@ type Repository interface {
 	GetAll() ([]Product, error)
 	Create(id int, name, productType string, count int, price float64) (Product, error)
 	LastID() int
+	AvailableID() int
 	Update(id int, name, productType string, count int, price float64) (Product, error)
 	UpdateName(id int, name string) (Product, error)
 	DeleteProduct(id int) error
@@ -60,13 +61,9 @@ func (r repository) Create(id int, name, productType string, count int, price fl
 	return p, nil
 }
 
-func (r repository) LastID() int {
+func (r repository) AvailableID() int {
 	var ListProdutos []Product
 	r.db.Read(&ListProdutos)
-
-	if len(ListProdutos) == 0 || ListProdutos[0].ID != 1 {
-		return 1
-	}
 
 	for prevI := range ListProdutos[:len(ListProdutos)-1] {
 		i := prevI + 1
@@ -74,6 +71,16 @@ func (r repository) LastID() int {
 			id := ListProdutos[prevI].ID + 1
 			return id
 		}
+	}
+	return r.LastID()
+}
+
+func (r repository) LastID() int {
+	var ListProdutos []Product
+	r.db.Read(&ListProdutos)
+
+	if len(ListProdutos) == 0 || ListProdutos[0].ID != 1 {
+		return 1
 	}
 	return ListProdutos[len(ListProdutos)-1].ID + 1
 }

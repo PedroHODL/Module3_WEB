@@ -31,7 +31,7 @@ func (s *service) GetAll() ([]Product, error) {
 }
 
 func (s *service) Create(name, productType string, count int, price float64) (Product, error) {
-	id := s.repository.LastID()
+	id := s.repository.AvailableID()
 	ps, err := s.repository.Create(id, name, productType, count, price)
 	if err != nil {
 		return Product{}, err

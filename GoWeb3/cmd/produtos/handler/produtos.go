@@ -66,6 +66,16 @@ func (p *Product) IdVerificatorMiddleware(ctx *gin.Context) {
 	ctx.Next()
 }
 
+// Listar todos os produtos godoc
+// @Summary Listar todos os produtos
+// @Tags Products
+// @Description Lista todos os produtos no banco de dados do Meli
+// @Accept  json
+// @Produce  json
+// @Param token header string true "Token"
+// @Success 200 {object} web.Response
+// @Failure 500 {object} web.Response
+// @Router /produtos [get]
 func (p *Product) GetAll(ctx *gin.Context) {
 	prod, err := p.service.GetAll()
 	if err != nil {
@@ -76,6 +86,18 @@ func (p *Product) GetAll(ctx *gin.Context) {
 	return
 }
 
+// Adicionar um novo produto godoc
+// @Summary Adicionar um novo produto
+// @Tags Products
+// @Description Adiciona um novo produto ao banco de dados do Meli
+// @Accept  json
+// @Produce  json
+// @Param token header string true "Token"
+// @Param product body request true "Product to store"
+// @Success 200 {object} web.Response
+// @Failure 400 {object} web.Response
+// @Failure 401 {object} web.Response
+// @Router /produtos [post]
 func (p *Product) CreateProduct(ctx *gin.Context) {
 	var req request
 	if err := ctx.Bind(&req); err != nil {
@@ -112,6 +134,19 @@ func (p *Product) CreateProduct(ctx *gin.Context) {
 	ctx.JSON(web.NewResponse(http.StatusOK, prod))
 }
 
+// Substituir um produto godoc
+// @Summary Substituir um produto
+// @Tags Products
+// @Description Atualizar um produto que já esta no banco de dados do Meli
+// @Accept  json
+// @Produce  json
+// @Param 	token 	header 	string 	true "Token"
+// @Param 	id 		path 	int  	true  "Product ID"
+// @Param 	product body 	request true "Product to Update"
+// @Success 200 {object} web.Response
+// @Failure 400 {object} web.Response
+// @Failure 404 {object} web.Response
+// @Router /produtos/{id} [put]
 func (p *Product) Update(ctx *gin.Context) {
 	var req request
 	if err := ctx.Bind(&req); err != nil {
@@ -150,6 +185,19 @@ func (p *Product) Update(ctx *gin.Context) {
 	return
 }
 
+// Trocar o nome de um produto godoc
+// @Summary Trocar o nome de um produto
+// @Tags Products
+// @Description Atualizar o nome de um produto existente no banco de dados do Meli
+// @Accept  json
+// @Produce  json
+// @Param 	token 	header 	string 	true "Token"
+// @Param 	id 		path 	int  	true  "Product ID"
+// @Param 	product body 	request true "Product to Patch"
+// @Success 200 {object} web.Response
+// @Failure 400 {object} web.Response
+// @Failure 404 {object} web.Response
+// @Router /produtos/{id} [patch]
 func (p *Product) UpdateName(ctx *gin.Context) {
 	var req request
 	if err := ctx.Bind(&req); err != nil {
@@ -173,6 +221,17 @@ func (p *Product) UpdateName(ctx *gin.Context) {
 	return
 }
 
+// Deletar um produto godoc
+// @Summary Deletar um produto
+// @Tags Products
+// @Description Deletar um produto do banco de dados do Meli
+// @Accept  json
+// @Produce  json
+// @Param 	token 	header 	string 	true "Token"
+// @Param 	id 		path 	int  	true  "Product ID to Delete"
+// @Success 200 {object} web.Response
+// @Failure 404 {object} web.Response
+// @Router /produtos/{id} [delete]
 func (p *Product) DeleteProduct(ctx *gin.Context) {
 	id, _ := strconv.Atoi(ctx.Param("id"))
 

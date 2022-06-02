@@ -52,6 +52,10 @@ func (r repository) Create(id int, name, productType string, count int, price fl
 		}
 	}
 
+	if id == 1 {
+		prod := []Product{p}
+		ListProdutos = append(prod, ListProdutos...)
+	}
 	r.db.Write(ListProdutos)
 	return p, nil
 }
@@ -60,15 +64,16 @@ func (r repository) LastID() int {
 	var ListProdutos []Product
 	r.db.Read(&ListProdutos)
 
+	if len(ListProdutos) == 0 || ListProdutos[0].ID != 1 {
+		return 1
+	}
+
 	for prevI := range ListProdutos[:len(ListProdutos)-1] {
 		i := prevI + 1
 		if ListProdutos[i].ID != (ListProdutos[prevI].ID + 1) {
 			id := ListProdutos[prevI].ID + 1
 			return id
 		}
-	}
-	if len(ListProdutos) == 0 {
-		return 1
 	}
 	return ListProdutos[len(ListProdutos)-1].ID + 1
 }

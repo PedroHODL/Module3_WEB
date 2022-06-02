@@ -1,7 +1,6 @@
 package produto
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/PedroHODL/Module3_WEB.git/GoWeb3/pkg/store"
@@ -42,7 +41,16 @@ func (r repository) Create(id int, name, productType string, count int, price fl
 	r.db.Read(&ListProdutos)
 
 	p := Product{id, name, productType, count, price}
-	ListProdutos = append(ListProdutos, p)
+
+	for i := range ListProdutos {
+		if ListProdutos[i].ID+1 == id {
+			post := make([]Product, len(ListProdutos[i+1:]))
+			copy(post, ListProdutos[i+1:])
+			ListProdutos = append(ListProdutos[:i+1], p)
+			ListProdutos = append(ListProdutos, post...)
+			break
+		}
+	}
 
 	r.db.Write(ListProdutos)
 	return p, nil
@@ -52,11 +60,17 @@ func (r repository) LastID() int {
 	var ListProdutos []Product
 	r.db.Read(&ListProdutos)
 
-	var id int = 0
-	if len(ListProdutos) > 0 {
-		id = ListProdutos[len(ListProdutos)-1].ID + 1
+	for prevI := range ListProdutos[:len(ListProdutos)-1] {
+		i := prevI + 1
+		if ListProdutos[i].ID != (ListProdutos[prevI].ID + 1) {
+			id := ListProdutos[prevI].ID + 1
+			return id
+		}
 	}
-	return id
+	if len(ListProdutos) == 0 {
+		return 1
+	}
+	return ListProdutos[len(ListProdutos)-1].ID + 1
 }
 
 func (r repository) Update(id int, name, productType string, count int, price float64) (Product, error) {
@@ -71,7 +85,7 @@ func (r repository) Update(id int, name, productType string, count int, price fl
 			return ListProdutos[i], nil
 		}
 	}
-	return Product{}, errors.New("ID não encontrado")
+	return Product{}, fmt.Errorf("produto %d não encontrado", id)
 }
 
 func (r repository) UpdateName(id int, name string) (Product, error) {

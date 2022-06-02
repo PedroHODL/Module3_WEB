@@ -21,11 +21,15 @@ func main() {
 	server := gin.Default()
 
 	r := server.Group("/produtos")
-	r.POST("/", p.CreateProduct)
-	r.GET("/", p.GetAll)
-	r.PUT("/:id", p.Update)
-	r.PATCH("/:id", p.UpdateName)
-	r.DELETE("/:id", p.DeleteProduct)
+	{
+		r.Use(p.TokenAuthMiddleware())
+
+		r.POST("/", p.CreateProduct)
+		r.GET("/", p.GetAll)
+		r.PUT("/:id", p.IdVerificatorMiddleware, p.Update)
+		r.PATCH("/:id", p.IdVerificatorMiddleware, p.UpdateName)
+		r.DELETE("/:id", p.IdVerificatorMiddleware, p.DeleteProduct)
+	}
 
 	server.Run()
 }
